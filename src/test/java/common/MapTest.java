@@ -1,6 +1,5 @@
 package common;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

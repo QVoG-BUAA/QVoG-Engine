@@ -41,6 +41,9 @@ public class InverseControlAndCgFlowPredicate extends AbstractFlowPredicate {
     }
 
     private void exists(Value current, IColumn source, IColumn sink, IColumn barrier, ITable result) {
+        if (sink.count() == 0) {
+            return;
+        }
         var flowIter = EulerFlow.builder().withStrategy(VertexFlowStrategies.CFG_CG_REVERSE).build().open(current);
         FlowHelper.iterateOverFlow(current, source, sink, barrier, result,
                 this.flowSensitive, this.addSysExit, this.addEntryExit, flowIter, alias, specialSinkPredicate);

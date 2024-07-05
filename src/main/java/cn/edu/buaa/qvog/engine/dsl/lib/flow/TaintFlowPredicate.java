@@ -60,8 +60,14 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
     }
 
     private void exists(Value current, IColumn source, IColumn sink, IColumn barrier, ITable result) {
+        if (sink.count() == 0) {
+            return;
+        }
         IColumn dataFlowResult = DataColumn.builder().withName(sink.name()).withIndex(IndexTypes.ValueIndex).build();
         existsDataFlow(current, sink, dataFlowResult, false);
+        if (dataFlowResult.count() == 0) {
+            return;
+        }
         if (barrier != null) {
             IColumn barrierDataResult = DataColumn.builder().withName(barrier.name()).withIndex(IndexTypes.ValueIndex).build();
             existsDataFlow(current, barrier, barrierDataResult, true);
@@ -72,13 +78,13 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
     }
 
     private void existsDataFlow(Value current, IColumn sink, IColumn result, Boolean isBarrier) {
-        Value sourceAncestor = FlowUtil.getDeclAncestor(current);
+        Value sourceAncestor = cn.edu.buaa.qvog.engine.dsl.lib.flow.FlowUtil.getDeclAncestor(current);
         var flowIter = EulerFlow.builder().withStrategy(VertexFlowStrategies.DFG).build().open(current);
         while (flowIter.hasNext()) {
             FlowStream stream = flowIter.next();
             var it = stream.iterator();
 
-            FlowPath path = new FlowPath();
+            cn.edu.buaa.qvog.engine.dsl.lib.flow.FlowPath path = new cn.edu.buaa.qvog.engine.dsl.lib.flow.FlowPath();
             while (it.hasNext()) {
                 Value next = it.next().getValue0();
                 path.add(next);
@@ -91,7 +97,7 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
         if (sink instanceof DataColumn) {
             if (isBarrier) {
                 sink.iterator().forEachRemaining(sinkNode -> {
-                    Value declAncestor = FlowUtil.getDeclAncestor((Value) sinkNode);
+                    Value declAncestor = cn.edu.buaa.qvog.engine.dsl.lib.flow.FlowUtil.getDeclAncestor((Value) sinkNode);
                     if (sourceAncestor != null && declAncestor != null
                             && sourceAncestor.getNode().id() == declAncestor.getNode().id()) {
                         result.addValue(sinkNode);
