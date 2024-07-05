@@ -54,11 +54,11 @@ public class HighPrecisionTaintFlow extends AbstractFlowPredicate {
     }
 
     private void exists(Value current, IColumn source, IColumn sink, IColumn barrier, ITable result) {
-        if (sink.count() == 0) {
+        if (sink.count() == 0 && specialSinkPredicate == null) {
             return;
         }
         IColumn dataFlowResult = DataColumn.builder().withName(sink.name()).withIndex(IndexTypes.ValueIndex).build();
-        if (dataFlowResult.count() == 0) {
+        if (dataFlowResult.count() == 0 && specialSinkPredicate == null) {
             return;
         }
         Set<Long> escapeFromBarriers = existsDataFlow(current, sink, dataFlowResult);
