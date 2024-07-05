@@ -131,7 +131,7 @@ public class QueryEngine {
 
         try (StringOutputStream out = new StringOutputStream()) {
             long start = System.currentTimeMillis();
-            query.run(style, new PrintStream(out));
+            query.run().display(style, new PrintStream(out));
             long end = System.currentTimeMillis();
             totalExecutionTime += end - start;
 
@@ -152,8 +152,8 @@ public class QueryEngine {
             }
 
             @Override
-            public void run(String style, PrintStream output) {
-                query.apply(QueryDescriptor.open()).display();
+            public CompleteQuery run() {
+                return query.apply(QueryDescriptor.open());
             }
         });
     }

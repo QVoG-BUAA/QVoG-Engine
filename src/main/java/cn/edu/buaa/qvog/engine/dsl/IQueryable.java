@@ -1,8 +1,7 @@
 package cn.edu.buaa.qvog.engine.dsl;
 
 import cn.edu.buaa.qvog.engine.db.IDbContext;
-
-import java.io.PrintStream;
+import cn.edu.buaa.qvog.engine.dsl.fluent.query.CompleteQuery;
 
 public interface IQueryable {
     IQueryable withDatabase(IDbContext dbContext);
@@ -11,5 +10,5 @@ public interface IQueryable {
         return this.getClass().getSimpleName();
     }
 
-    void run(String style, PrintStream output);
+    CompleteQuery run();
 }
