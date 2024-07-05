@@ -1,5 +1,7 @@
 package cn.edu.buaa.qvog.executor;
 
+import cn.edu.buaa.qvog.engine.dsl.IQueryable;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,7 +12,10 @@ import java.util.Set;
 
 public class QueryLoader {
     public static List<Class<?>> load(String[] libPaths, String packageName) {
-        var queries = loadQueryLibraries(libPaths).stream().filter(clazz -> clazz.getPackageName().contains(packageName)).toList();
+        var queries = loadQueryLibraries(libPaths).stream().filter(clazz ->
+                clazz.getPackageName().contains(packageName) && IQueryable.class.isAssignableFrom(clazz)
+        ).toList();
+
         // remove duplicates
         Set<String> queryNames = new HashSet<>();
         List<Class<?>> uniqueQueries = new ArrayList<>();
@@ -19,6 +24,7 @@ public class QueryLoader {
                 uniqueQueries.add(query);
             }
         }
+
         return uniqueQueries;
     }
 
@@ -45,7 +51,7 @@ public class QueryLoader {
 
     private static List<Class<?>> loadQueryLibrary(Path path) {
         // get all classes in the jar
-        System.out.println("Loading library: " + path.toAbsolutePath().toString());
+        System.out.println("Loading library: " + path.toAbsolutePath());
         try {
             return JarLoader.extractClassesFromJar(path.toFile());
         } catch (IOException e) {
