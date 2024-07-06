@@ -6,9 +6,9 @@ QVoG 查询引擎
 
 ## 项目构建
 
-在 IDEA 中，选择 Build > Build Artifacts... > QVoGine:jar > Build 生成 jar 包至 `out` 目录下。
+在 IDEA 中，执行 `maven install` 即可构建项目，生成的 jar 包位于 `target` 目录下
 
-生成的 jar 包用于 [QVoG-Query](https://github.com/QVoG-BUAA/QVoG-Query) 的依赖。
+该项目生成的 jar 包用于 [QVoG-Query](https://github.com/QVoG-BUAA/QVoG-Query) 的依赖。
 
 ## 项目结构
 
@@ -51,7 +51,8 @@ cn.edu.buaa.qvog
 
 其中，gremlin 为 Gremlin 连接的配置，cache 为缓存的配置，此处选择 `none` 表示不启用缓存。
 
-QVoGine 会默认扫描同级目录中 `lib` 目录下的所有查询库，将 [QVoG-Query](https://github.com/QVoG-BUAA/QVoG-Query) 项目生成的查询库放置添加到该目录下。
+QVoGine 会默认扫描同级目录中 `lib` 目录下的所有查询库，将 [QVoG-Query](https://github.com/QVoG-BUAA/QVoG-Query)
+项目生成的查询库放置添加到该目录下。
 
 使用 `--language` 指定查询选择的语言，添加 `--list` 表示仅列出可用的查询。
 
@@ -100,7 +101,9 @@ $ java -jar QVoGine.jar --language python --query CWE_377.InsecureTempFile
         "redis": {
             "host": <ip>,
             "port": 6379,
-            "password": <password> | null,
+            "password": <password>
+            |
+            null,
             "db": <dabase>,
             "shard": 5120
         }
