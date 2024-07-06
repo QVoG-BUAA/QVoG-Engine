@@ -11,6 +11,7 @@ import cn.edu.buaa.qvog.engine.dsl.fluent.flow.IFlowPredicate;
 import cn.edu.buaa.qvog.engine.dsl.lib.flow.impl.EulerFlow;
 import cn.edu.buaa.qvog.engine.dsl.lib.flow.strategy.VertexFlowStrategies;
 import cn.edu.buaa.qvog.engine.dsl.lib.predicate.IValuePredicate;
+import cn.edu.buaa.qvog.engine.dsl.lib.predicate.MatchNone;
 import cn.edu.buaa.qvog.engine.helper.graph.FlowHelper;
 
 public class InverseControlAndCgFlowPredicate extends AbstractFlowPredicate {
@@ -41,7 +42,7 @@ public class InverseControlAndCgFlowPredicate extends AbstractFlowPredicate {
     }
 
     private void exists(Value current, IColumn source, IColumn sink, IColumn barrier, ITable result) {
-        if (sink.count() == 0 && specialSinkPredicate == null) {
+        if (sink.count() == 0 && specialSinkPredicate instanceof MatchNone) {
             return;
         }
         var flowIter = EulerFlow.builder().withStrategy(VertexFlowStrategies.CFG_CG_REVERSE).build().open(current);

@@ -20,6 +20,7 @@ import cn.edu.buaa.qvog.engine.dsl.lib.flow.impl.FlowStream;
 import cn.edu.buaa.qvog.engine.dsl.lib.flow.strategy.IVertexFlowStrategy;
 import cn.edu.buaa.qvog.engine.dsl.lib.flow.strategy.VertexFlowStrategies;
 import cn.edu.buaa.qvog.engine.dsl.lib.predicate.IValuePredicate;
+import cn.edu.buaa.qvog.engine.dsl.lib.predicate.MatchNone;
 import cn.edu.buaa.qvog.engine.helper.graph.FlowHelper;
 
 import java.util.Set;
@@ -54,11 +55,11 @@ public class HighPrecisionTaintFlow extends AbstractFlowPredicate {
     }
 
     private void exists(Value current, IColumn source, IColumn sink, IColumn barrier, ITable result) {
-        if (sink.count() == 0 && specialSinkPredicate == null) {
+        if (sink.count() == 0 && specialSinkPredicate instanceof MatchNone) {
             return;
         }
         IColumn dataFlowResult = DataColumn.builder().withName(sink.name()).withIndex(IndexTypes.ValueIndex).build();
-        if (dataFlowResult.count() == 0 && specialSinkPredicate == null) {
+        if (dataFlowResult.count() == 0 && specialSinkPredicate instanceof MatchNone) {
             return;
         }
         Set<Long> escapeFromBarriers = existsDataFlow(current, sink, dataFlowResult);
