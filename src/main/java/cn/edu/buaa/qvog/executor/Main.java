@@ -24,6 +24,7 @@ public class Main {
         String packageName = switch (language.toLowerCase()) {
             case "python" -> "query.python";
             case "cxx" -> "query.cxx";
+            case "java" -> "query.java";
             default -> null;
         };
         if (packageName == null) {
