@@ -60,7 +60,9 @@ public class DfsFlow extends BaseFlow {
     }
 
     protected boolean onEnter(Value value, Edge edge) {
-        return !value.isUnknown();
+        // FIXME: This is suspicious to let an unknown value pass
+        // return !value.isUnknown();
+        return true;
     }
 
     private boolean checkEdgeLeft(List<Pair<Vertex, Edge>> neighbors) {
