@@ -2,6 +2,7 @@ package cn.edu.buaa.qvog.engine.dsl.lib.flow;
 
 import cn.edu.buaa.qvog.engine.core.graph.values.Value;
 import cn.edu.buaa.qvog.engine.db.IDbContext;
+import cn.edu.buaa.qvog.engine.dsl.data.DataColumn;
 import cn.edu.buaa.qvog.engine.dsl.data.IColumn;
 import cn.edu.buaa.qvog.engine.dsl.data.ITable;
 import cn.edu.buaa.qvog.engine.dsl.fluent.flow.AbstractFlowPredicate;
@@ -39,7 +40,7 @@ public class DataFlowPredicate extends AbstractFlowPredicate {
     }
 
     private void exists(Value current, IColumn source, IColumn sink, IColumn barrier, ITable result) {
-        if (sink.count() == 0 && specialSinkPredicate instanceof MatchNone) {
+        if (sink.count() == 0 && sink instanceof DataColumn && specialSinkPredicate instanceof MatchNone) {
             return;
         }
         var flowIter = EulerFlow.builder().withStrategy(VertexFlowStrategies.DFG).build().open(current);
@@ -50,7 +51,7 @@ public class DataFlowPredicate extends AbstractFlowPredicate {
             while (it.hasNext()) {
                 Value next = it.next().getValue0();
                 path.add(next);
-                if (barrier.containsValue(next)) {
+                if (barrier != null && barrier.containsValue(next)) {
                     break;
                 } else if (sink.containsValue(next)) {
                     result.addRow(Map.of(
