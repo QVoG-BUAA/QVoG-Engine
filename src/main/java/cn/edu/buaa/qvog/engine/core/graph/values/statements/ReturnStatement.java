@@ -2,6 +2,7 @@ package cn.edu.buaa.qvog.engine.core.graph.values.statements;
 
 import cn.edu.buaa.qvog.engine.core.graph.values.Value;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -27,5 +28,13 @@ public class ReturnStatement extends Statement {
             return null;
         }
         return values.get(0);
+    }
+
+    @Override
+    public void addChildren(Collection<Value> children) {
+        children.addAll(values);
+        for (Value value : values) {
+            value.addChildren(children);
+        }
     }
 }

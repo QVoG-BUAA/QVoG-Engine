@@ -80,16 +80,12 @@ public class DfsFlow extends BaseFlow {
                 value.getNode().id(), this.attrOverEdge);
 
         boolean pathWorkWell = false;
-        boolean isDfg = false;
         boolean isCgEquals = true;
         ArrayList<Pair<Vertex, Edge>> cgList = new ArrayList<>();
         ArrayList<Pair<Vertex, Edge>> otherList = new ArrayList<>();
         for (Pair<Vertex, Edge> neighbor : neighbors) {
             Edge neighborEdge = neighbor.getValue1();
             String label = neighborEdge.label();
-            if ("dfg".equals(label)) {
-                isDfg = true;
-            }
 
             if ("cg".endsWith(label)) {
                 cgList.add(neighbor);
@@ -98,7 +94,7 @@ public class DfsFlow extends BaseFlow {
             }
         }
 
-        isDfg |= this.strategy.equals(VertexFlowStrategies.DFG);
+        boolean isDfg = this.strategy.equals(VertexFlowStrategies.DFG);
         if (isDfg && !checkEdgeLeft(otherList) || !isDfg && !checkEdgeLeft(neighbors)) {
             streams.add(new FlowStream(stack));
             onExit(value, edge);
@@ -140,6 +136,8 @@ public class DfsFlow extends BaseFlow {
             return pathWorkWell;
         }
 
+        // 1. not dfg
+        // 2. dfg with no cg
         if (!(value instanceof CxxFunctionExit) && isCgEquals) {
             for (var neighbor : cgList) {
                 var neighborValue = helper.toValue(neighbor.getValue0());
@@ -147,6 +145,7 @@ public class DfsFlow extends BaseFlow {
                 if (visited.contains(neighborEdge.id())) {
                     continue;
                 }
+                // for recursive call, we need to judge
                 boolean flag = true;
                 for (Pair<Long, Integer> objects : lastCgCaller) {
                     if (objects.getValue0().equals(value.getNode().id())) {

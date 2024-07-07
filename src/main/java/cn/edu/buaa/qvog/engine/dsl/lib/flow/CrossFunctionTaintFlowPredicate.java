@@ -15,6 +15,7 @@ import cn.edu.buaa.qvog.engine.dsl.lib.flow.impl.FlowStream;
 import cn.edu.buaa.qvog.engine.dsl.lib.flow.impl.HamiltonFlow;
 import cn.edu.buaa.qvog.engine.dsl.lib.flow.strategy.VertexFlowStrategies;
 import cn.edu.buaa.qvog.engine.dsl.lib.predicate.IValuePredicate;
+import cn.edu.buaa.qvog.engine.dsl.lib.predicate.MatchNone;
 import cn.edu.buaa.qvog.engine.helper.graph.FlowHelper;
 import cn.edu.buaa.qvog.engine.helper.graph.GraphFilter;
 import org.javatuples.Pair;
@@ -94,7 +95,7 @@ public class CrossFunctionTaintFlowPredicate extends AbstractFlowPredicate {
 
         // if sourceSinkPair is empty, then we need to check all the source
         // if sourceSinkPair is not empty, then we need to check all the values
-        if ((sourceSinkPair.isEmpty() || !values.isEmpty()) && this.specialSinkPredicate != null) {
+        if ((sourceSinkPair.isEmpty() || !values.isEmpty()) && this.specialSinkPredicate instanceof MatchNone) {
             this.addSysExit = false;
 
             var gremlinDb = dbContext.getGremlinDb();

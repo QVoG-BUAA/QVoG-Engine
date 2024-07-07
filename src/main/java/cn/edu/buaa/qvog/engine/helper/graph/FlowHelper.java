@@ -45,7 +45,7 @@ public class FlowHelper {
                     break;
                 }
                 if (flowSensitive) {
-                    if ((sink.containsValue(next) || specialSinkPredicate != null && specialSinkPredicate.test(current)) && next != current) {
+                    if ((sink.containsValue(next) && next != current)) {
                         if (!addSysExit && !addEntryExit) {
                             result.addRow(Map.of(
                                     source.name(), current,
