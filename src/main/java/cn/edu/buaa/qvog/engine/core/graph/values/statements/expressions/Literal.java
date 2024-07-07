@@ -29,4 +29,8 @@ public class Literal extends Expression {
     public Object getValue() {
         return value;
     }
+
+    public boolean isNull() {
+        return value == null;
+    }
 }
