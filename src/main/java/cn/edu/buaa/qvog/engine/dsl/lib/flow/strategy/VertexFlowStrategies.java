@@ -75,8 +75,7 @@ public class VertexFlowStrategies {
             return g.V(id).inE("dfg")
                     .or(
                             has("description", DECL2USAGE),
-                            and(has("description", P.within(attrs)),
-                                    not(has("defineOperationLike", "none"))))
+                            has("description", P.within(attrs)))
                     .dedup()
                     .project("e", "v")
                     .by().by(outV()).toStream().map(m -> new Pair<>(
