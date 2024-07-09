@@ -61,7 +61,7 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
     }
 
     private void exists(Value current, IColumn source, IColumn sink, IColumn barrier, ITable result) {
-        if (sink.count() == 0 && specialSinkPredicate instanceof MatchNone) {
+        if (sink.count() == 0 && sink instanceof DataColumn && specialSinkPredicate instanceof MatchNone) {
             return;
         }
         IColumn dataFlowResult = DataColumn.builder().withName(sink.name()).withIndex(IndexTypes.ValueIndex).build();

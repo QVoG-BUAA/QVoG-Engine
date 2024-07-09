@@ -1,6 +1,5 @@
 package cn.edu.buaa.qvog.engine.core.graph.factory;
 
-import cn.edu.buaa.qvog.engine.core.graph.values.UnknownValue;
 import cn.edu.buaa.qvog.engine.core.graph.values.Value;
 import cn.edu.buaa.qvog.engine.exception.InvalidAstException;
 import cn.edu.buaa.qvog.engine.exception.ValueHandlerMismatchException;
@@ -72,7 +71,8 @@ public class ValueFactory implements IValueFactory {
         var handler = handlers.get(type);
         if (handler == null) {
             // TODO, should be better to fix
-            value = (TBase) new UnknownValue();
+            // value = (TBase) new UnknownValue();
+            value = defaultValue;
         } else {
             try {
                 value = (TBase) handler.build(json, this);

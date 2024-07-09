@@ -6,7 +6,7 @@ QVoG 查询引擎
 
 ## 项目构建
 
-在 IDEA 中，执行 `maven install` 即可构建项目，生成的 jar 包位于 `target` 目录下
+在 IDEA 中，执行 `maven install` 即可构建项目，生成的 jar 包位于 `target` 目录下。
 
 该项目生成的 jar 包用于 [QVoG-Query](https://github.com/QVoG-BUAA/QVoG-Query) 的依赖。
 
