@@ -58,7 +58,7 @@ QVoGine 会默认扫描同级目录中 `lib` 目录下的所有查询库，将 Q
 
 ```bash
 $ java -jar QVoGine.jar --language python --list
-Loading library: .../lib/Query.jar
+Loading library: ../lib/Query.jar
 CWE_022.TaintedPath
 CWE_094.CodeInjection
 CWE_215.FlaskDebug

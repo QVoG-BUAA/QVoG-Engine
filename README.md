@@ -57,7 +57,7 @@ Use `--language` to specify the language for the queries, and add `--list` to li
 
 ```bash
 $ java -jar QVoGine.jar --language python --list
-Loading library: .../lib/Query.jar
+Loading library: ../lib/Query.jar
 CWE_022.TaintedPath
 CWE_094.CodeInjection
 CWE_215.FlaskDebug
