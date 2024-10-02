@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: cn.edu.buaa.qvog.executor.Main
+Main-Class: cn.edu.engine.qvog.executor.Main
 
