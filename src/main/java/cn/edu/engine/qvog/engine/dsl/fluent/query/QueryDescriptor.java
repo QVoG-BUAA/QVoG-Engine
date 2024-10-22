@@ -81,7 +81,9 @@ public class QueryDescriptor implements IQueryDescriptor, InitialQuery, SimpleQu
         }
         result = builder.build();
         return this;
-    }    @Override
+    }
+
+    @Override
     public FilteredQuery where(IFilterPredicate predicate) {
         var tableName = predicate.getTableName();
         ITable table;
@@ -120,7 +122,9 @@ public class QueryDescriptor implements IQueryDescriptor, InitialQuery, SimpleQu
         }
         output.println(table);
         return this;
-    }    @Override
+    }
+
+    @Override
     public FilteredQuery whereP(IValuePredicate predicate) {
         var table = tables.asTable();
         return where(FilterPredicateDescriptor.create().onTable(table.name()).where(predicate).build());
@@ -131,7 +135,9 @@ public class QueryDescriptor implements IQueryDescriptor, InitialQuery, SimpleQu
      * TODO
      */
     private void resultPostHandleByLanguageFeature(ITable result, String[] columnNames) {
-    }    @Override
+    }
+
+    @Override
     public FilteredQuery where(IFlowPredicate clause) {
         ITableSet tablesToJoin = new TableSet();
         clause.getAffectedTableNames().forEach(
@@ -170,10 +176,6 @@ public class QueryDescriptor implements IQueryDescriptor, InitialQuery, SimpleQu
 
         return value.toString();
     }
-
-
-
-
 
 
 }

@@ -84,6 +84,7 @@ public class DfsFlow extends BaseFlow {
         boolean pathWorkWell = false;
         boolean isCgEquals = true;
         ArrayList<Pair<Vertex, Edge>> cgList = new ArrayList<>();
+        // dfg or cfg
         ArrayList<Pair<Vertex, Edge>> otherList = new ArrayList<>();
         for (Pair<Vertex, Edge> neighbor : neighbors) {
             Edge neighborEdge = neighbor.getValue1();
@@ -107,6 +108,7 @@ public class DfsFlow extends BaseFlow {
             for (Pair<Vertex, Edge> cgPair : cgList) {
                 Object cgId = cgPair.getValue0().id();
                 boolean flag = false;
+                // if there is node that do need dfg=cg
                 for (Pair<Vertex, Edge> otherPair : otherList) {
                     Object otherId = otherPair.getValue0().id();
                     if (otherId.equals(cgId)) {
@@ -120,10 +122,13 @@ public class DfsFlow extends BaseFlow {
             }
         }
 
+        // cross function
         if (isDfg && !cgList.isEmpty() && isCgEquals) {
+            // return
             if (value instanceof CxxFunctionExit) {
                 pathWorkWell = handleCrossFunction(pathWorkWell, otherList);
             } else {
+                // call
                 for (var neighbor : otherList) {
                     var neighborValue = helper.toValue(neighbor.getValue0());
                     var neighborEdge = neighbor.getValue1();
@@ -138,8 +143,8 @@ public class DfsFlow extends BaseFlow {
             return pathWorkWell;
         }
 
-        // 1. not dfg
-        // 2. dfg with no cg
+        // 1. not dfg -> cfg + cg, 此时 isCgEquals 无用
+        // 2. dfg with no cg, no use
         if (!(value instanceof CxxFunctionExit) && isCgEquals) {
             for (var neighbor : cgList) {
                 var neighborValue = helper.toValue(neighbor.getValue0());
@@ -165,6 +170,9 @@ public class DfsFlow extends BaseFlow {
                 lastCgCaller.pop();
             }
         } else {
+            // 1. just dfg 且不是 functionExit -> 空
+                // dfg 和 cg equals，表示必是跨函数 dfg
+            // 2. functionExit 的 cfg + cg
             if (isCgEquals) {
                 pathWorkWell = handleCrossFunction(pathWorkWell, cgList);
             }
@@ -192,6 +200,7 @@ public class DfsFlow extends BaseFlow {
                 var neighborValue = helper.toValue(neighbor.getValue0());
                 var neighborEdge = neighbor.getValue1();
                 Pair<Long, Integer> peek = lastCgCaller.peek();
+                // the same node, call-in + call-out
                 if (peek.getValue0() == neighborValue.getNode().id()) {
                     stack.push(Pair.with(neighborValue, neighborEdge));
 
