@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
+//函数式接口
 import java.util.stream.Stream;
 
 /**
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 public abstract class Value implements Serializable {
     private static final ObjectMapper mapper = new ObjectMapper()
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    //实例化之后用于序列化与反序列化。
     protected Boolean canEscapeFromBarrier = false;
     private Collection<Value> flattened;
     @JsonIgnore
@@ -40,6 +42,7 @@ public abstract class Value implements Serializable {
             }
         };
     }
+    //之后凡是调用keyMapper.apply(Object)就会运行上述代码。
 
     public CodeNode getNode() {
         return node;
@@ -80,6 +83,8 @@ public abstract class Value implements Serializable {
     public Stream<Value> toStream(IValuePredicate predicate) {
         return toStream().filter(predicate::test);
     }
+    //toStream在下面实现，这里就是把flattened列表中的每个Value都用test检验一遍
+    //而test方法在接口IValuePredicate中声明，但是被许多类实现，要具体看是哪一个类。
 
     /**
      * Get all children of this value as a stream. This is actually
@@ -122,5 +127,9 @@ public abstract class Value implements Serializable {
     public String dumps() throws JsonProcessingException {
         return this.getClass().getSimpleName() + ": " +
                 mapper.writeValueAsString(this);
+        //this.getClass().getSimpleName()用于获取当前类名，不含包名。
+        //而writeValueAsString则是将对象转换为json，要注意上面的@JsonIgnore注解不转化
+        //最终转化后的效果形如：
+        //Person : {"name":"Alice","age":20}
     }
 }

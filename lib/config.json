@@ -1,0 +1,9 @@
+{
+    "gremlin":{
+        "host":"211.71.15.48",
+        "port":8182
+    },
+    "cache":{
+        "type":"none"
+    }
+}

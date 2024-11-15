@@ -32,4 +32,12 @@ public final class ArraySubExpression extends Expression {
         children.add(this.array);
         this.array.addChildren(children);
     }
+    //这个addChildren写的还真是确实没毛病
+    //首先要明确Collection<Value> children是从外部传入的一个集合。
+    //我们要向这个集合里面添加东西
+    //children.addAll(this.subList);就是把subList全部移到children里面
+    //然后下面的for循环是为了保证subList里面每个元素里面的类似subList这样嵌套的全都给拿出来。
+    //有点类似于递归地把一棵语法树的所有部分全展开放到一个集合里
+    //接下来两个也是同样的道理。
+    //但是有个不太明白的地方是为什么要分成subList和array？可能和底层的数据结构有关
 }
