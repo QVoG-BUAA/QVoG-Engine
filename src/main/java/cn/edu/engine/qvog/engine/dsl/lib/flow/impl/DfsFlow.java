@@ -15,6 +15,7 @@ import java.util.*;
  * DFS flow implementation.
  */
 public class DfsFlow extends BaseFlow {
+    protected final Integer MAX_DEPTHS = 300;
     protected final Stack<Object> visited = new Stack<>();
     private final Stack<Pair<Value, Edge>> stack = new Stack<>();
     protected Stack<Pair<Long, Integer>> lastCgCaller = new Stack<>();
@@ -43,7 +44,7 @@ public class DfsFlow extends BaseFlow {
     @Override
     public Iterator<FlowStream> open(Value source) {
         stack.push(Pair.with(source, null));
-        dfs(source, null);
+        dfs(source, null, 0);
         stack.pop();
 
         for (FlowStream stream : streams) {
@@ -74,8 +75,11 @@ public class DfsFlow extends BaseFlow {
         return false;
     }
 
-    private boolean dfs(Value value, Edge edge) {
+    private boolean dfs(Value value, Edge edge, int depths) {
         if (!onEnter(value, edge)) {
+            return false;
+        }
+        if (depths > MAX_DEPTHS) {
             return false;
         }
         var neighbors = strategy.getNeighborsByAttr(dbContext.getGremlinDb().g(),
@@ -126,7 +130,7 @@ public class DfsFlow extends BaseFlow {
         if (isDfg && !cgList.isEmpty() && isCgEquals) {
             // return
             if (value instanceof CxxFunctionExit) {
-                pathWorkWell = handleCrossFunction(pathWorkWell, otherList);
+                pathWorkWell = handleCrossFunction(pathWorkWell, otherList, depths);
             } else {
                 // call
                 for (var neighbor : otherList) {
@@ -134,7 +138,7 @@ public class DfsFlow extends BaseFlow {
                     var neighborEdge = neighbor.getValue1();
                     lastCgCaller.push(new Pair<>(value.getNode().id(), visited.size()));
                     stack.push(Pair.with(neighborValue, neighborEdge));
-                    pathWorkWell |= dfs(neighborValue, neighborEdge);
+                    pathWorkWell |= dfs(neighborValue, neighborEdge, depths + 1);
                     stack.pop();
                     lastCgCaller.pop();
                 }
@@ -165,26 +169,28 @@ public class DfsFlow extends BaseFlow {
                 }
                 lastCgCaller.push(new Pair<>(value.getNode().id(), visited.size()));
                 stack.push(Pair.with(neighborValue, neighborEdge));
-                pathWorkWell |= dfs(neighborValue, neighborEdge);
+                pathWorkWell |= dfs(neighborValue, neighborEdge, depths + 1);
                 stack.pop();
                 lastCgCaller.pop();
             }
         } else {
             // 1. just dfg 且不是 functionExit -> 空
                 // dfg 和 cg equals，表示必是跨函数 dfg
+                // 即 dfg 在某些情况下表征了 cg 的某些能力
             // 2. functionExit 的 cfg + cg
             if (isCgEquals) {
-                pathWorkWell = handleCrossFunction(pathWorkWell, cgList);
+                pathWorkWell = handleCrossFunction(pathWorkWell, cgList, depths + 1);
             }
         }
 
         // it means no cg works well
+        // so we should use dfg(inner function) cfg directly
         if (!pathWorkWell) {
             for (var neighbor : otherList) {
                 var neighborValue = helper.toValue(neighbor.getValue0());
                 var neighborEdge = neighbor.getValue1();
                 stack.push(Pair.with(neighborValue, neighborEdge));
-                pathWorkWell |= dfs(neighborValue, neighborEdge);
+                pathWorkWell |= dfs(neighborValue, neighborEdge, depths + 1);
                 stack.pop();
             }
         }
@@ -193,7 +199,7 @@ public class DfsFlow extends BaseFlow {
         return pathWorkWell;
     }
 
-    private boolean handleCrossFunction(boolean pathWorkWell, ArrayList<Pair<Vertex, Edge>> cgList) {
+    private boolean handleCrossFunction(boolean pathWorkWell, ArrayList<Pair<Vertex, Edge>> cgList, int depth) {
         if (!lastCgCaller.isEmpty()) {
             boolean flag = false;
             for (var neighbor : cgList) {
@@ -210,7 +216,7 @@ public class DfsFlow extends BaseFlow {
                         objects.push(object);
                     }
                     onExitFunctionCall(peek.getValue1() + 1);
-                    pathWorkWell |= dfs(neighborValue, neighborEdge);
+                    pathWorkWell |= dfs(neighborValue, neighborEdge, depth + 1);
                     this.visited.clear();
                     for (Object object : objects) {
                         this.visited.push(object);
@@ -229,7 +235,7 @@ public class DfsFlow extends BaseFlow {
                     // source inside the callee-function, sink outside
                     lastCgCaller.push(new Pair<>(neighborValue.getNode().id(), visited.size()));
                     stack.push(Pair.with(neighborValue, neighborEdge));
-                    pathWorkWell |= dfs(neighborValue, neighborEdge);
+                    pathWorkWell |= dfs(neighborValue, neighborEdge, depth + 1);
                     stack.pop();
                     lastCgCaller.pop();
                 }
@@ -242,7 +248,7 @@ public class DfsFlow extends BaseFlow {
                 // source inside the callee-function, sink outside
                 lastCgCaller.push(new Pair<>(neighborValue.getNode().id(), visited.size()));
                 stack.push(Pair.with(neighborValue, neighborEdge));
-                pathWorkWell |= dfs(neighborValue, neighborEdge);
+                pathWorkWell |= dfs(neighborValue, neighborEdge, depth + 1);
                 stack.pop();
                 lastCgCaller.pop();
             }
