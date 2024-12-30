@@ -27,7 +27,11 @@ public final class CodeNode extends Node {
     }
 
     public long id() {
-        return property.id();
+        if (property == null) {
+            return -1;
+        } else {
+            return property.id();
+        }
     }
 
     public String code() {
