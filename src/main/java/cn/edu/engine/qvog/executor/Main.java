@@ -25,6 +25,7 @@ public class Main {
             case "python" -> "query.python";
             case "cxx" -> "query.cxx";
             case "java" -> "query.java";
+            case "arkts" -> "query.arkts";
             default -> null;
         };
         if (packageName == null) {

@@ -63,6 +63,7 @@ public class DataColumn extends BaseColumn {
                 addValue(value);
             }
         } else {
+            //这种对应着IndexTypes.NoIndex
             this.values.addAll(values);
             size += values.size();
         }
