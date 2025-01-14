@@ -73,3 +73,5 @@ fabric.properties
 
 **/java/local/
 **/java/misc/
+
+./test.bat
