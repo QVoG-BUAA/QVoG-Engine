@@ -16,6 +16,8 @@ public class LiteralHandler extends BaseHandler implements IValueHandler<Literal
         Object valueObject = JsonHelper.tryGet(json, "value");
         if (valueObject instanceof Integer value) {
             return new Literal(IntegerType.UNSPECIFIED, value);
+        } else if (valueObject instanceof Long value) {
+            return new Literal(IntegerType.INT64, value);
         } else if (valueObject instanceof Float value) {
             return new Literal(FloatType.UNSPECIFIED, value);
         } else if (valueObject instanceof Boolean value) {

@@ -11,7 +11,10 @@ import org.json.simple.JSONObject;
 public class KeywordHandler extends BaseHandler implements IValueHandler<NamedExpression> {
     @Override
     public NamedExpression build(JSONObject json, IValueFactory factory) {
-        String name = JsonHelper.getValue(json, "arg");
+        String name = JsonHelper.tryGetValue(json, "arg");
+        if (name == null) {
+            name = "anonym";
+        }
         Expression expression = factory.build(
                 JsonHelper.getObject(json, "value"),
                 UnknownExpression.DEFAULT);

@@ -27,6 +27,7 @@ public class PythonValueHandlerProvider implements IValueHandlerProvider {
                 .registerHandler("Return", new ReturnStatementHandler())
                 .registerHandler("Try", new TryStatementHandler())
                 .registerHandler("FunctionDef", new FunctionDeclarationHandler())
+                .registerHandler("Starred", new StarredHandler())
                 .registerHandler(null, new DefaultValueHandler());
     }
 }
