@@ -141,3 +141,45 @@ usage: QVoGine
 - `--output`：将查询结果输出至指定文件，可结合 `--format` 输出 JSON 文件。
 
 - `--style`：查询结果的展示格式，支持 Markdown、HTML、JSON。
+
+## 特殊查询用法
+
+### LineNumberQuery
+
+目前 qvog 在 arkts 语言上支持使用 LineNumberQuery，需要将待查询的行号写入 json 文件中，文件结构如下
+
+```text
+config.json
+result.json (可任意命名)
+QVoGine-1.0.jar
+- lib
+    - Query-1.0.jar
+```
+
+其中 `config.json` 配置需要加上 `llm` 对象，如下
+
+```json
+{
+  ...
+  "llm": {
+    "path": "./result.json",  // 与本地 json 同名
+    "cwe": "cwe-id",  // 可任意命名
+    "file": "file"  // 可任意命名
+  }
+}
+```
+
+`result.json` 结构如下
+
+```json
+{
+  "cwe-id": {  // 与 config.json 中的 llm.cwe 相同
+    "file": {  // 与 config.json 中的 llm.file 相同
+      "pred_source": [0, 1, ...],
+      "pred_sink": [4, 5, ...]
+    }
+  }
+}
+```
+
+**注意：result.json 中的行号从 0 开始**
