@@ -94,12 +94,11 @@ public class DfsFlow extends BaseFlow {
             Edge neighborEdge = neighbor.getValue1();
             String label = neighborEdge.label();
 
-//            if ("cg".endsWith(label)) {
-//                cgList.add(neighbor);
-//            } else {
-//                otherList.add(neighbor);
-//            }
-            otherList.add(neighbor);
+            if ("cg".endsWith(label)) {
+                cgList.add(neighbor);
+            } else {
+                otherList.add(neighbor);
+            }
         }
 
         boolean isDfg = this.strategy.equals(VertexFlowStrategies.DFG);
