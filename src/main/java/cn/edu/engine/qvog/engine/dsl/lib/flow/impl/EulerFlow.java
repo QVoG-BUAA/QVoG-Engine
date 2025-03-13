@@ -27,6 +27,7 @@ public class EulerFlow extends DfsFlow {
 
     private EulerFlow(IVertexFlowStrategy strategy, List<String> attr, Set<Long> escapeFromBarrier) {
         super(strategy, attr, escapeFromBarrier);
+        this.shouldTerminate = false;
     }
 
     public static IFlow.Builder builder() {

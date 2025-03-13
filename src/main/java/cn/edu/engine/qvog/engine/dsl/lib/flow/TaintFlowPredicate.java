@@ -55,8 +55,11 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
     @Override
     protected void exists(IColumn source, IColumn sink, IColumn barrier, ITable result) {
         var it = source.iterator();
+        int i = 1;
+        System.out.println(source.count() + " source VS " + sink.count() + " sink");
         while (it.hasNext()) {
             exists((Value) it.next(), source, sink, barrier, result);
+            System.out.println("Finish: source-id-" + i++);
         }
     }
 
@@ -69,6 +72,7 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
         if (dataFlowResult.count() == 0 && specialSinkPredicate instanceof MatchNone) {
             return;
         }
+        System.out.println("data flow finished.");
         if (barrier != null) {
             IColumn barrierDataResult = DataColumn.builder().withName(barrier.name()).withIndex(IndexTypes.ValueIndex).build();
             existsDataFlow(current, barrier, barrierDataResult, true);
@@ -76,6 +80,7 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
         } else {
             existsControlOrCgFlow(current, source, dataFlowResult, barrier, result, specialSinkPredicate);
         }
+        System.out.println("control flow finished.");
     }
 
     private void existsDataFlow(Value current, IColumn sink, IColumn result, Boolean isBarrier) {
@@ -111,6 +116,14 @@ public class TaintFlowPredicate extends AbstractFlowPredicate {
     private void existsControlOrCgFlow(Value current, IColumn source, IColumn sink, IColumn barrier,
                                        ITable result, IValuePredicate specialSinkPredicate) {
         var flowIter = EulerFlow.builder().withStrategy(VertexFlowStrategies.CFG_CG).build().open(current);
+        System.out.println("start collecting control-flow result:");
+        FlowHelper.iterateOverFlow(current, source, sink, barrier, result,
+                this.flowSensitive, this.addSysExit, this.addEntryExit, flowIter, alias, specialSinkPredicate);
+    }
+
+    private void existsResultByDataFlow(Value current, IColumn source, IColumn sink, IColumn barrier,
+                                       ITable result, IValuePredicate specialSinkPredicate) {
+        var flowIter = EulerFlow.builder().withStrategy(VertexFlowStrategies.DFG).build().open(current);
         FlowHelper.iterateOverFlow(current, source, sink, barrier, result,
                 this.flowSensitive, this.addSysExit, this.addEntryExit, flowIter, alias, specialSinkPredicate);
     }

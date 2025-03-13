@@ -21,7 +21,21 @@ public class GraphHelper implements IGraphHelper {
     @Override
     public CodeNode toCodeNode(Vertex vertex) {
         try {
-            String json = vertex.property("json").value().toString();
+            String json;
+            try {
+                 json = vertex.property("json").value().toString();
+            } catch (Exception e) {
+                CodeVertexProperty property;
+                property = new CodeVertexProperty(
+                        getId(vertex),
+                        vertex.property("code").value().toString(),
+                        -1,
+                        "",
+                        "", // TODO: functionDefName
+                        ""
+                );
+                return new CodeNode(vertex, property, new UnknownValue());
+            }
 
             CodeVertexProperty property;
             property = new CodeVertexProperty(
@@ -37,7 +51,15 @@ public class GraphHelper implements IGraphHelper {
         } catch (Exception e) {
             // FIXME for debug
 //            throw e;
-            return new CodeNode(vertex, null, UnknownValue.DEFAULT);
+            CodeVertexProperty property = new CodeVertexProperty(
+                    getId(vertex),
+                    vertex.property("code").value().toString(),
+                    vertex.<Integer>property("lineno").value(),
+                    vertex.property("file").value().toString(),
+                    "", // TODO: functionDefName
+                    ""
+            );
+            return new CodeNode(vertex, property, UnknownValue.DEFAULT);
         }
     }
 }

@@ -23,7 +23,9 @@ public final class CodeNode extends Node {
         super(vertex);
         this.property = property;
         this.value = value;
-        this.value.setNode(this);
+        if (this.value != null) {
+            this.value.setNode(this);
+        }
     }
 
     public long id() {

@@ -1,5 +1,6 @@
 package cn.edu.engine.qvog.engine.helper.graph;
 
+import cn.edu.engine.qvog.engine.core.graph.values.CacheValue;
 import cn.edu.engine.qvog.engine.core.graph.values.Value;
 import cn.edu.engine.qvog.engine.dsl.data.IColumn;
 import cn.edu.engine.qvog.engine.dsl.data.ITable;
@@ -29,15 +30,70 @@ public class FlowHelper {
                                        Iterator<FlowStream> flowIter,
                                        String alias,
                                        IValuePredicate specialSinkPredicate) {
+//        if (!flowIter.hasNext()) {
+//            result.addRow(Map.of(
+//                    source.name(), current,
+//                    sink.name(), current,
+//                    alias, new FlowPath()
+//            ));
+//            return;
+//        }
         ArrayList<Value> hasSinkList = new ArrayList<>();
         while (flowIter.hasNext()) {
             FlowStream stream = flowIter.next();
             FlowPath path = new FlowPath();
             var it = stream.iterator();
             boolean hasThisSourceAdded = false;
+            boolean isBarrier = false;
             while (it.hasNext()) {
                 Pair<Value, Edge> nextP = it.next();
                 Value next = nextP.getValue0();
+
+                // cacheSpeedUp value
+                if (next instanceof CacheValue cacheValue) {
+                    // if there is a barrier between CacheValue lineno-range, break
+                    if (barrier != null) {
+                        boolean hasBarrier = false;
+                        for (int i = 0; i < barrier.count(); i ++) {
+                            Value barrierValue = (Value) barrier.getValue(i);
+                            int barrierLine = barrierValue.getNode().lineNumber();
+                            Pair<Integer, Integer> linenoBetween = cacheValue.getLinenoBetween();
+                            if (barrierLine >= linenoBetween.getValue0()
+                                    && barrierLine <= linenoBetween.getValue1()) {
+                                hasBarrier = true;
+                                break;
+                            }
+                        }
+                        if (hasBarrier) {
+                            break;
+                        }
+                    }
+                    // if there is a sink between CacheValue lineno-range, add it to result
+                    if (sink != null) {
+                        boolean hasSink = false;
+                        for (int i = 0; i < sink.count(); i ++) {
+                            Value sinkValue = (Value) sink.getValue(i);
+                            int sinkLineno = sinkValue.getNode().lineNumber();
+                            Pair<Integer, Integer> linenoBetween = cacheValue.getLinenoBetween();
+                            if (sinkLineno >= linenoBetween.getValue0()
+                                    && sinkLineno <= linenoBetween.getValue1()) {
+                                hasSink = true;
+                                break;
+                            }
+                        }
+                        if (hasSink) {
+                            hasThisSourceAdded = true;
+                            if (specialSinkPredicate == null) {
+                                result.addRow(Map.of(
+                                        source.name(), current,
+                                        sink.name(), next,
+                                        alias, path
+                                ));
+                            }
+                            break;
+                        }
+                    }
+                }
 
                 path.add(next);
                 boolean isLast = !it.hasNext();
@@ -68,6 +124,7 @@ public class FlowHelper {
 
                     if (!next.getCanEscapeFromBarrier()
                             && barrier != null && barrier.containsValue(next) && next != current) {
+                        isBarrier = true;
                         break;
                     }
                 } else {
@@ -83,6 +140,13 @@ public class FlowHelper {
                 }
             }
             // System.out.println("path: " + path);
+//            if (!isBarrier && !hasThisSourceAdded && addSysExit) {
+//                result.addRow(Map.of(
+//                        source.name(), current,
+//                        sink.name(), current,
+//                        alias, new FlowPath()
+//                ));
+//            }
         }
 
         if (!flowSensitive) {
