@@ -2,6 +2,7 @@ package cn.edu.engine.qvog.engine.helper.graph;
 
 import cn.edu.engine.qvog.engine.core.graph.CodeNode;
 import cn.edu.engine.qvog.engine.core.graph.factory.IValueFactory;
+import cn.edu.engine.qvog.engine.core.graph.values.UnknownValue;
 import cn.edu.engine.qvog.engine.helper.cache.NodeCache;
 import com.google.inject.Inject;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -20,6 +21,9 @@ public class CachedGraphHelper extends GraphHelper {
         if (node == null) {
             node = super.toCodeNode(vertex);
             cache.put(vertex, node);
+            if (node == null) {
+                return new CodeNode(vertex, null, new UnknownValue());
+            }
         }
         return node;
     }

@@ -1,5 +1,7 @@
 package cn.edu.engine.qvog.engine.core.graph.factory;
 
+import cn.edu.engine.qvog.engine.core.graph.types.Type;
+import cn.edu.engine.qvog.engine.core.graph.values.UnknownValue;
 import cn.edu.engine.qvog.engine.core.graph.values.Value;
 import cn.edu.engine.qvog.engine.exception.InvalidAstException;
 import cn.edu.engine.qvog.engine.exception.ValueHandlerMismatchException;
@@ -67,19 +69,28 @@ public class ValueFactory implements IValueFactory {
     @Override
     public <TBase extends Value, TDefault extends TBase> TBase build(JSONObject json, TDefault defaultValue) {
         TBase value;
-        var type = JsonHelper.getValue(json, "_type");
+        String type;
+        try {
+            type = JsonHelper.getValue(json, "_type");
+        } catch (Exception e) {
+            value = (TBase) new UnknownValue();
+            return value;
+        }
         var handler = handlers.get(type);
         if (handler == null) {
             // TODO, should be better to fix
-            // value = (TBase) new UnknownValue();
-            value = defaultValue;
+             value = (TBase) new UnknownValue();
+//            value = defaultValue;
         } else {
             try {
                 value = (TBase) handler.build(json, this);
             } catch (ClassCastException e) {
-                throw new ValueHandlerMismatchException(type, handler.getClass(), e);
+//                throw new ValueHandlerMismatchException(type, handler.getClass(), e);
+                value = (TBase) new UnknownValue();
             } catch (Exception e) {
-                throw new InvalidAstException(json, e);
+//                throw new InvalidAstException(json, e);
+//                value = new
+                value = (TBase) new UnknownValue();
             }
         }
 

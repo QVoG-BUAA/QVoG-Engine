@@ -26,6 +26,7 @@ public class ContainsFunctionCall implements IValuePredicate {
     public ContainsFunctionCall(Predicate<CallExpression> predicate, String wildcard) {
         this.predicate = predicate;
         this.wildcard = wildcard;
+//        this.pattern = wildcard;
         this.pattern = wildcard == null ? null : RegexHelper.wildcardToRegex(wildcard);
     }
 

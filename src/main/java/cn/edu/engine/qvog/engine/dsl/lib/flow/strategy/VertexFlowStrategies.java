@@ -7,6 +7,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.javatuples.Pair;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
@@ -55,6 +56,7 @@ public class VertexFlowStrategies {
                             (Vertex) m.get("v"), (Edge) m.get("e"))).toList();
             ArrayList<Pair<Vertex, Edge>> ans = new ArrayList<>(dfgList);
             ans.addAll(cgList);
+            ans.sort(Comparator.comparingInt(p -> p.getValue0().value("lineno")));
             return ans;
         }
 

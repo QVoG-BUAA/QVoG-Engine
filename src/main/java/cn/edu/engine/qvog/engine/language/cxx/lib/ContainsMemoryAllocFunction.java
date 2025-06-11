@@ -11,7 +11,8 @@ public class ContainsMemoryAllocFunction implements IValuePredicate {
                 ("malloc".equals(callExpression.getFunction().getName())
                         || "calloc".equals(callExpression.getFunction().getName())
                         || "realloc".equals(callExpression.getFunction().getName())
-                        || "wcsdup".equals(callExpression.getFunction().getName()))
+//                        || "wcsdup".equals(callExpression.getFunction().getName())
+                )
         );
     }
 }

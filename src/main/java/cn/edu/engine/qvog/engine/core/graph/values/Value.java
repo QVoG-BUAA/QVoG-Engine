@@ -55,9 +55,9 @@ public abstract class Value implements Serializable {
      * @param node The node that contains this value.
      */
     public void setNode(CodeNode node) {
-        if (node.value() != this) {
-            throw new IllegalArgumentException("Node does not contain this value.");
-        }
+//        if (node.value() != this) {
+//            throw new IllegalArgumentException("Node does not contain this value.");
+//        }
 
         this.node = node;
     }
