@@ -141,3 +141,28 @@ usage: QVoGine
 - `--output`：将查询结果输出至指定文件，可结合 `--format` 输出 JSON 文件。
 
 - `--style`：查询结果的展示格式，支持 Markdown、HTML、JSON。
+
+### 结合大模型查询
+
+如果需要使用大模型进行 python 的 source/sink/barrier 识别，可以在配置文件中进行配置。其中 path 参数需要为待测项目根目录，和建图使用的路径保持一致。
+
+```json
+{
+  "gremlin": {
+    "host": <ip>,
+    "port": 8182
+  },
+  "cache": {
+    "type": "none"
+  },
+  "llm": {
+    "path": <project_root>,
+    "cwe": "cwe-<id>",
+    "api": {
+      "apiKey": <apiKey>,
+      "baseUrl": <baseUrl>,
+      "model": <model>
+    }
+  }
+}
+```

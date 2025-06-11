@@ -140,3 +140,29 @@ usage: QVoGine
 - `--output`: Outputs the query result to the specified file, can be combined with --format to output a JSON file.
 
 - `--style`: The display format of the query result, supporting Markdown, HTML, JSON.
+
+### Combined with LLM query
+
+If you need to use a large model to identify Python sources, sinks, and barriers, you can configure it in the configuration file. The `path` parameter should be set to the root directory of the target project, consistent with the path used for building the graph.
+
+```json
+{
+  "gremlin": {
+    "host": <ip>,
+    "port": 8182
+  },
+  "cache": {
+    "type": "none"
+  },
+  "llm": {
+    "path": <project_root>,
+    "cwe": "cwe-<id>",
+    "api": {
+      "apiKey": <apiKey>,
+      "baseUrl": <baseUrl>,
+      "model": <model>
+    }
+  }
+}
+```
+
